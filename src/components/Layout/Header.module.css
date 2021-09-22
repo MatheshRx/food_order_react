@@ -1,6 +1,6 @@
 .img-div {
   clip-path: polygon(0 0, 100% 0%, 100% 67%, 0% 100%);
-  margin-top: 100px !important;
+  margin-top: 90px !important;
 }
 .header {
   position: fixed !important;

@@ -1,12 +1,15 @@
 import Modal from "../UI/Modal";
 import "../../css/materia/bootstrap.min.css";
 import classes from "./Cart.module.css";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import CartContext from "../../store/cart-context";
 import CartItem from "./CartItem";
+import Checkout from "./Checkout";
 
 const Cart = (props) => {
   const cartCtx = useContext(CartContext);
+
+  const [checkout, setCheckout] = useState(false);
 
   const canOrder = cartCtx.items.length > 0;
 
@@ -21,9 +24,9 @@ const Cart = (props) => {
     cartCtx.removeItem(id);
   };
 
-  const CartItems = cartCtx.items.map((item) => (
+  const CartItems = cartCtx.items.map((item, index) => (
     <CartItem
-      key={item.id}
+      key={`Cm${index}`}
       name={item.name}
       price={item.price}
       amount={item.amount}
@@ -31,6 +34,25 @@ const Cart = (props) => {
       onAdd={addToCartHandler.bind(null, item)}
     />
   ));
+  // ? from action button "Close" and "Order" buttons
+  const cartAction = (
+    <div className="d-flex justify-content-end">
+      <button
+        className="btn btn-sm btn-outline-danger closeCart me-2"
+        onClick={props.onCloseCart}
+      >
+        Close
+      </button>
+      {canOrder && (
+        <button
+          className="btn btn-sm btn-outline-warning"
+          onClick={() => setCheckout(true)}
+        >
+          Order
+        </button>
+      )}
+    </div>
+  );
   return (
     <Modal onClose={props.onCloseCart}>
       <div>
@@ -45,17 +67,11 @@ const Cart = (props) => {
           </b>
         </span>
       </div>
-      <div className="d-flex justify-content-end">
-        <button
-          className="btn btn-sm btn-outline-danger closeCart me-2"
-          onClick={props.onCloseCart}
-        >
-          Close
-        </button>
-        {canOrder && (
-          <button className="btn btn-sm btn-outline-warning">Order</button>
-        )}
-      </div>
+      {!checkout ? (
+        cartAction
+      ) : (
+        <Checkout closeCheckout={() => setCheckout(false)} />
+      )}
     </Modal>
   );
 };
